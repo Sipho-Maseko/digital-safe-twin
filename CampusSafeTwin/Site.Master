@@ -1,0 +1,105 @@
+<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.Master.cs" Inherits="CampusSafeTwin.SiteMaster" %>
+<!DOCTYPE html>
+<html lang="en">
+<head runat="server">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CampusSafe Twin</title>
+
+    <!-- map style sheets,,, -->
+    <link rel="icon" type="image/png" href="<%= ResolveUrl("~/Images/nwu-logo-white.png") %>" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href="~/Site.css" type="text/css" />
+
+    <!-- app root so api calls work from sub folders too,,, -->
+    <script>window.AppRoot = '<%= ResolveUrl("~/") %>';</script>
+
+    <!-- map scripts and heat layer... -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+    <script src="<%= ResolveUrl("~/Scripts/campusmap.js") %>"></script>
+
+    <!-- center cordinates for map,,, -->
+    <meta name="map-center-lat" content="<%= MapCenterLat %>" />
+    <meta name="map-center-lng" content="<%= MapCenterLng %>" />
+
+    <asp:ContentPlaceHolder ID="HeadContent" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="mainForm" runat="server">
+        <header class="app-header">
+            <div class="header-container">
+                <div class="header-brand">
+                    <a href="<%= ResolveUrl("~/Default.aspx") %>" class="brand-link">
+                        <img src="<%= ResolveUrl("~/Images/nwu-logo-white.png") %>" alt="NWU Logo" class="brand-logo" />
+                        <span class="brand-title">CampusSafe Twin</span>
+                    </a>
+                </div>
+                <div class="header-auth">
+                    <asp:PlaceHolder ID="phLoggedIn" runat="server">
+                        <span class="user-greeting">Welcome, <strong><asp:Literal ID="litUserName" runat="server" /></strong></span>
+                        <a href="<%= ResolveUrl("~/Help.aspx") %>" class="btn-help" title="Help Centre &ndash; guides on how to use the system">? Help</a>
+                        <a href="<%= ResolveUrl("~/Logout.aspx") %>" class="btn-logout">Logout</a>
+                    </asp:PlaceHolder>
+                    <asp:PlaceHolder ID="phLoggedOut" runat="server">
+                        <a href="<%= ResolveUrl("~/Login.aspx") %>" class="nav-auth-link">Login</a>
+                        <a href="<%= ResolveUrl("~/Register.aspx") %>" class="nav-auth-link btn-register-nav">Register</a>
+                    </asp:PlaceHolder>
+                </div>
+            </div>
+        </header>
+
+        <nav class="app-nav">
+            <div class="nav-container">
+                <ul class="nav-list">
+                    <asp:PlaceHolder ID="phStudentNav" runat="server">
+                        <li><a href="<%= ResolveUrl("~/Student/Sos.aspx") %>" class="nav-link" style="background:#cc0000; color:#fff; font-weight:700; border-radius:4px;">&#128680; SOS</a></li>
+                        <li><a href="<%= ResolveUrl("~/Student/Report.aspx") %>" class="nav-link">Report Incident</a></li>
+                        <li><a href="<%= ResolveUrl("~/Student/MyReports.aspx") %>" class="nav-link">My Reports</a></li>
+                        <li><a href="<%= ResolveUrl("~/SafeRoute.aspx") %>" class="nav-link">Safe Route</a></li>
+                        <li><a href="<%= ResolveUrl("~/Notifications.aspx") %>" class="nav-link">Notifications <%= UnreadBadgeHtml %></a></li>
+                    </asp:PlaceHolder>
+
+                    <asp:PlaceHolder ID="phGuardNav" runat="server">
+                        <li><a href="<%= ResolveUrl("~/Security/Map.aspx") %>" class="nav-link">Security Map</a></li>
+                        <li><a href="<%= ResolveUrl("~/Security/MyDispatches.aspx") %>" class="nav-link">My Dispatches</a></li>
+                        <li><a href="<%= ResolveUrl("~/Admin/Hotspots.aspx") %>" class="nav-link">Patrol Hotspots</a></li>
+                        <li><a href="<%= ResolveUrl("~/Security/FlaggedZones.aspx") %>" class="nav-link">Flagged Zones</a></li>
+                        <li><a href="<%= ResolveUrl("~/SafeRoute.aspx") %>" class="nav-link">Safe Route</a></li>
+                        <li><a href="<%= ResolveUrl("~/Notifications.aspx") %>" class="nav-link">Notifications <%= UnreadBadgeHtml %></a></li>
+                    </asp:PlaceHolder>
+
+                    <asp:PlaceHolder ID="phSupervisorNav" runat="server">
+                        <li><a href="<%= ResolveUrl("~/Security/Map.aspx") %>" class="nav-link">Security Map</a></li>
+                        <li><a href="<%= ResolveUrl("~/Admin/LiveOps.aspx") %>" class="nav-link">Live Ops</a></li>
+                        <li><a href="<%= ResolveUrl("~/Security/MyDispatches.aspx") %>" class="nav-link">My Dispatches</a></li>
+                        <li><a href="<%= ResolveUrl("~/Admin/Hotspots.aspx") %>" class="nav-link">Hotspots</a></li>
+                        <li><a href="<%= ResolveUrl("~/Admin/Network.aspx") %>" class="nav-link">Route Network</a></li>
+                        <li><a href="<%= ResolveUrl("~/Security/FlaggedZones.aspx") %>" class="nav-link">Flagged Zones</a></li>
+                        <li><a href="<%= ResolveUrl("~/Admin/Locations.aspx") %>" class="nav-link">Locations</a></li>
+                        <li><a href="<%= ResolveUrl("~/Admin/Users.aspx") %>" class="nav-link">Staff</a></li>
+                        <li><a href="<%= ResolveUrl("~/Admin/Analytics.aspx") %>" class="nav-link">Analytics</a></li>
+                        <li><a href="<%= ResolveUrl("~/Admin/Simulation.aspx") %>" class="nav-link">Simulation</a></li>
+                        <li><a href="<%= ResolveUrl("~/SafeRoute.aspx") %>" class="nav-link">Safe Route</a></li>
+                        <li><a href="<%= ResolveUrl("~/Notifications.aspx") %>" class="nav-link">Notifications <%= UnreadBadgeHtml %></a></li>
+                    </asp:PlaceHolder>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="app-main">
+            <div class="content-panel">
+                <asp:ContentPlaceHolder ID="MainContent" runat="server">
+                </asp:ContentPlaceHolder>
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <div class="footer-container">
+                <p>&copy; <%= DateTime.Now.Year %> CampusSafe Twin &bull; Campus Safety Portal</p>
+            </div>
+        </footer>
+    </form>
+</body>
+</html>

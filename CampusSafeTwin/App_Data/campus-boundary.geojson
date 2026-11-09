@@ -1,0 +1,28 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "North-West University Potchefstroom Campus",
+        "code": "NWU-POTCH",
+        "area": "Main Campus"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [27.0860, -26.6830],
+            [27.0965, -26.6830],
+            [27.1015, -26.6870],
+            [27.1025, -26.6930],
+            [27.0980, -26.6970],
+            [27.0890, -26.6970],
+            [27.0855, -26.6920],
+            [27.0860, -26.6830]
+          ]
+        ]
+      }
+    }
+  ]
+}
